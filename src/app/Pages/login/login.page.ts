@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/compat/auth';
+import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook/ngx';
 
 @Component({
   selector: 'app-login',
@@ -9,7 +10,9 @@ import {AngularFireAuth} from '@angular/fire/compat/auth';
 export class LoginPage implements OnInit {
 
   constructor(
-    private fireauth: AngularFireAuth
+    private fireauth: AngularFireAuth,
+    private fb: Facebook,
+
   ) { }
 
   ngOnInit() {
@@ -40,6 +43,15 @@ export class LoginPage implements OnInit {
       .catch(err => {
         console.log(`login failed ${err}`);
       });
+  }
+
+  async loginWithFacebook(){
+    this.fb.login(['email'])
+      .then((response: FacebookLoginResponse) => {
+        console.log(response.authResponse.accessToken);
+      }).catch((error) => {
+      console.log(error);
+    });
   }
 
 
