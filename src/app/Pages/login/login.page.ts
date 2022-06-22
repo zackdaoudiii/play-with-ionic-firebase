@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/compat/auth';
+import firebase from 'firebase/compat/app';
+import { AlertController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-login',
@@ -8,9 +11,16 @@ import {AngularFireAuth} from '@angular/fire/compat/auth';
 })
 export class LoginPage implements OnInit {
 
+  user;
+
   constructor(
-    private fireauth: AngularFireAuth
-  ) { }
+    private fireauth: AngularFireAuth,
+    public alertController: AlertController
+  ) {
+
+
+
+  }
 
   ngOnInit() {
   }
@@ -40,6 +50,33 @@ export class LoginPage implements OnInit {
       .catch(err => {
         console.log(`login failed ${err}`);
       });
+  }
+
+  async loginWithGoogle(){
+    this.fireauth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+
+    this.fireauth.authState.subscribe((user) => {
+      this.user = user ? user : null;
+      console.log(this.user);
+      console.log("uID" + this.user.uid);
+      console.log(this.user.email);
+      console.log(this.user.displayName)
+      this.presentAlertMultipleButtons(this.user.displayName);
+    });
+
+
+  }
+
+  async  presentAlertMultipleButtons(message) {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'YOUR NAME',
+      subHeader: 'Subtitle',
+      message: message,
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 
 
